@@ -2,7 +2,13 @@
 module.exports = {
   content: ['./src/**/*.{html,js,svelte,ts}'],
   theme: {
-    extend: {}
+    extend: {
+      fontFamily:{
+        Merriweather: 'Merriweather Sans',
+        Montserrat: 'Montserrat, sans-serif',
+        Roboto: 'Roboto, sans-serif'
+      }
+    }
   },
   plugins: []
 };
