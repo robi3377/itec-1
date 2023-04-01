@@ -1,22 +1,25 @@
 <script>
+  import { text } from 'svelte/internal';
   import Counter from './lib/Counter.svelte'
-
-  function readText(){
-    let generatedText = document.querySelector("#generatedText").innerHTML;
-    // @ts-ignore
-    responsiveVoice.speak(generatedText, "UK English Male", {onerror: function(){console.log("Error!")}});
-  }
 
     let user, verses, temperature, max_tokens;
     function handleSubmit(event) {
       
       if(user === undefined){
-        event.preventDefault();
+        // @ts-ignore
+        document.querySelector("#loadingGif").style.opacity = 100; //
+        // @ts-ignore
+        document.querySelector("#generatedText").style.opacity = 0; //
+        event.preventDefault();     
         return;
       }
       else{
-        if( temperature === undefined) temperature = 3;
+        if( temperature === undefined) temperature = 3; 
         if( max_tokens === undefined) max_tokens = 2;
+        // @ts-ignore
+        document.querySelector("#loadingGif").style.opacity = 0; //
+        // @ts-ignore
+        document.querySelector("#generatedText").style.opacity = 100; //
         event.preventDefault();
         const formData = new FormData();
         formData.append('promptInput', user);
@@ -40,18 +43,61 @@
     let options = document.querySelector("#Options");
     if( on === true ){ 
       on = false;
+      // @ts-ignore
       options.style.opacity = 100;
+      // @ts-ignore
       options.style.transform = "translateY(0px)";
       more = "Less";
     }
     else if( on === false ){
      
+      // @ts-ignore
       options.style.opacity = 0;
+      // @ts-ignore
       options.style.transform = "translateY(20px)";
       on = true;
       more = "More" 
     }
   }
+
+  function readText(){
+    let generatedText = document.querySelector("#generatedText").innerHTML;
+    // @ts-ignore
+    responsiveVoice.speak(verses, "UK English Male", {onerror: function(){console.log("Error!")}});
+  }
+
+//   function generateImage() {
+//   // Get the user input text
+//   const textInput = document.getElementById("text-input");
+
+//   // Set up the API endpoint and headers
+//   const apiUrl = "https://api.deepai.org/api/text2img";
+//   const apiKey = "e30b8796-8591-4695-b5aa-1af941a942ac";
+//   const headers = {
+//     "Content-Type": "application/x-www-form-urlencoded",
+//     "Api-Key": apiKey,
+//   };
+
+//   // Set up the request body
+//   const text = "Old tree on a hill"
+//   const body = new URLSearchParams({
+//     text: text,
+//   });
+
+//   // Send the API request using fetch()
+//   fetch(apiUrl, {
+//     method: "POST",
+//     headers: headers,
+//     body: body,
+//   })
+//     .then((response) => response.json())
+//     .then((data) => {
+//       // Display the generated image
+//       const outputImage = document.getElementById("output-image");
+//       outputImage.src = data.output_url;
+//     })
+//     .catch((error) => console.error(error));
+// }
 
 </script>
 
@@ -72,14 +118,14 @@
           <button on:click={moreOptions} class="text-[#DAA107] flex justify-center hover:text-black ease-in-out duration-300">{more} options</button>
 
           <div id="Options" class="bg-[#1D263B] text-[#DAE3E5] mb-6 p-4 min-h-[4em] w-[52vw] rounded-[30px] opacity-0 translate-y-20 transition ease-in-out duration-500">
-            <div class="grid grid-cols-2 gap-4">
-              <div class="flex items-center justify-center">
+            <div class="grid lg:grid-cols-2 grid-cols-1  gap-4">
+              <div class="flex items-center justify-center md:flex-row flex-col">
                 <p class=" mr-3">temperature:</p>
                 <form class="border-3px border-slate-500 rounded-sm" action="" id="contact-form" method="POST">
                   <input class="h-[25px] w-[10em] text-black outline-none" type="number" min="1" max="5" bind:value={temperature}>
                 </form>
               </div>  
-              <div class="flex items-center justify-center">
+              <div class="flex items-center justify-center md:flex-row flex-col">
                 <p class=" mr-3">max tokens:</p>
                 <form action="" id="contact-form" method="POST">
                   <input class="h-[25px] w-[10em] text-black outline-none" type="number" id="quantity" name="quantity"  min="1" max="5" bind:value={max_tokens}>
@@ -90,15 +136,23 @@
       </div>
   </div>
 
-  <div class="min-h-[100vh] w-[100vw] text-[#DAE3E5] font-Montserrat flex flex-col items-center">
-      <div class="relative bg-slate-600 min-h-[10px] p-10 rounded-3xl mt-10">      
-          <div id="generatedText" class="text-[#DAE3E5]">{verses}</div>
-          <button class=" absolute right-2 bottom-2 p-1 hover:bg-slate-500 rounded-full duration-300" on:click={readText}>
+  <div class="min-h-[100vh] w-[100vw] text-[#DAE3E5] font-Montserrat flex flex-row justify-center items-center gap-[6em]">
+      <div class="relative bg-slate-600 min-h-[10px] max-w-[30em] p-10 rounded-3xl mt-10">      
+          <div id="generatedText" class="max-w-[30em] text-[#DAE3E5]"></div>
+          <div id="loadingGif">
+            <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+            <lottie-player src="https://assets7.lottiefiles.com/packages/lf20_Wh2iKs.json"  background="transparent"  speed="1.2"  style="width: 300px; height: 300px;"  loop autoplay></lottie-player>  
+          </div>
+              <button on:click={readText} class=" absolute right-2 bottom-2 p-1 hover:bg-slate-500 rounded-full duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
               </svg>
           </button>
       </div>
+      <div id="output-image" class="bg-slate-600 h-[60vh] w-[60vh] rounded-3xl ">
+
+      </div>
+      <button>btn</button>
   </div> 
 
   <script src="https://code.responsivevoice.org/responsivevoice.js?key=3uuX8akb"></script> 
