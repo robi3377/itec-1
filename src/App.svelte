@@ -1,22 +1,18 @@
 <script>
-  import { text } from 'svelte/internal';
+  import { text, validate_each_argument } from 'svelte/internal';
 
-    let user, verses, temperature, max_tokens;
+    let user, verses, temperature, max_tokens, value, imageUrl;
     function handleSubmit(event) {
-      
       if(user === undefined){
         event.preventDefault();     
         return;
       }
       else{
-        if( temperature === undefined) temperature = 3; 
-        if( max_tokens === undefined) max_tokens = 2;
-
         event.preventDefault();
         const formData = new FormData();
         formData.append('promptInput', user);
-
-        fetch('http://127.0.0.1:8000/', {
+        value = value.toString();
+        fetch('http://127.0.0.1:8000/'+value, {
         method: 'POST',
         body: formData
         })
@@ -58,40 +54,19 @@
     responsiveVoice.speak(generatedText, "UK English Male", {onerror: function(){console.log("Error!")}});
   }
 
-  const apiKey = "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";
-  const prompt = "red and white barn";
-  let imageUrl;
-  fetch('https://api.openai.com/v1/images/generations', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    },
-    body: JSON.stringify({
-      model: 'image-alpha-001',
-      prompt: prompt,
-      n: 1,
-      size: '1024x1024',
-      response_format: 'url'
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    imageUrl = data.data[0].url;
-    console.log(imageUrl);
-    // Do something with the generated image URL, like display it in an <img> tag or download it
-  })
-  .catch(error => console.error(error));
-
-  function submit(value){
-    console.log(value);
-    if(value === 0){
-
-    }else if(value === 1){
-
-    }else if(value === 2){
-
-    }
+  function submit(param){
+    if(param === 0)
+    document.querySelector("input").placeholder = "write a poem based on your first verse";
+    if(param === 1)
+    document.querySelector("input").placeholder = "write a poem based on a theme";
+    if(param === 2)
+    document.querySelector("input").placeholder = "write a poem for the AI to mirror";
+    value = param;
+    document.getElementById(param).style.backgroundColor = "#FE8300";
+    for( let i = 0 ; i < 3 ; i++)
+      // @ts-ignore
+      if(i != param)document.getElementById(i).style.backgroundColor = "#1D263B";
+      document.getElementById(i).style.backgroundColor;
   }
 
 </script>
@@ -102,7 +77,7 @@
           <h1 class="text-transparent bg-gradient-to-r from-[#FF0000] to-[#FE8300] font-Montserrat lg:text-[14em] md:text-[10em] text-[4em] mb-10" style="-webkit-background-clip: text;">Poetique</h1>
           <div class="flex justify-between  items-center">
               <form on:submit={handleSubmit} action="" id="contact-form" method="POST">
-                  <input bind:value={user} placeholder="input your prompt to create a poem" class="w-[50vw] bg-[#1D263B] text-[#DAE3E5] rounded-l-[30px] p-3 text-xl font-Montserrat outline-none max-[766px]:w-[60vw] text-center" type="text">
+                  <input bind:value={user} placeholder="write a poem based on your first verse" class="w-[50vw] placeholder:opacity-0 bg-[#1D263B] text-[#DAE3E5] rounded-l-[30px] p-3 text-xl font-Montserrat outline-none max-[766px]:w-[60vw] text-center sm:min-w-[25em] sm:placeholder:opacity-100" type="text">
               </form>
               <button on:click={handleSubmit}>
                   <svg class="w-10 h-[52px] bg-[#1D263B] rounded-r-[30px] hover:bg-slate-500 duration-300" xmlns="http://www.w3.org/2000/svg" fill="transparent" viewBox="0 0 24 24" stroke-width="1.5" stroke="white">
@@ -130,7 +105,7 @@
 
   <div class="min-h-[100vh] w-[100vw] text-[#DAE3E5] font-Montserrat flex flex-col justify-center items-center lg:gap-[6em] lg:flex-row">
       <div class="relative bg-slate-600 min-h-[10px] w-[100vw] p-10  mt-10 flex flex-col justify-center items-center shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] shadow-[#0A5C71] md:max-w-[30em] md:rounded-3xl">      
-          <div id="generatedText" class="max-w-[30em] text-[#DAE3E5]">asdwadasd</div>
+          <div id="generatedText" class="max-w-[30em] text-[#DAE3E5]">{verses}</div>
           <div id="loadingGif">
             <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
             <lottie-player src="https://assets7.lottiefiles.com/packages/lf20_Wh2iKs.json"  background="transparent"  speed="1.2"  style="width: 300px; height: 300px;"  loop autoplay></lottie-player>  
