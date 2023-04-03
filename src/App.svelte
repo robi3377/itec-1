@@ -1,7 +1,7 @@
 <script>
   import { text, validate_each_argument } from 'svelte/internal';
 
-    let user, verses, temperature, max_tokens, value, imageUrl;
+    let user, verses=" ", temperature, max_tokens, value, imageUrl, i;
     function handleSubmit(event) {
       if(user === undefined){
         event.preventDefault();     
@@ -19,6 +19,8 @@
         .then(response => response.json())
         .then(data => {
             verses=data.poem;
+            imageUrl=data.img;
+            console.log(verses);
         });
         console.log(temperature);
         document.querySelector("main").style.maxHeight = "none";
